@@ -6,8 +6,7 @@ THIS CODE SHOULD NOT BE USED TO DIAGNOSE ANY KIND OF MEDICAL CONDITION.
  
  
 Authors in chronological order of contribution:
-Author 1
-Author 2
+Joy Yan
  
 Further Information:
 http://cns.utexas.edu/fri
@@ -54,13 +53,45 @@ console.log("This file last modified " + docMod); // generates message in javaSc
 </div>
 	
 <div id="content" class="w3-container">
-	<p>Content goes here.</p>
-		 	
-</div>
-	
-<footer class="w3-bottom w3-container w3-flat-carrot">
-	<p>DIY!</p>
-</footer>
+	<!-- Canvas area: this is where the drawing surface is created and displayed -->
+	<canvas id="a" width="300" height="190" style="border:2px solid #000000;"></canvas> <!-- This creates the canvas with a black border so users can see the drawing area -->
+	<p>Click the buttons below to create artwork on the canvas.</p> <!-- Instruction text describing what the canvas will do -->
 
-</body>
-</html>
+	<a onclick="drawRect();" class="w3-btn w3-grey w3-round"> Draw Rectangle!</a> <!-- Button to draw a rectangle on the canvas -->
+	<a onclick="my_name();" class="w3-btn w3-grey w3-round"> Write name!</a> <!-- Button to write a name onto the canvas -->
+	<a onclick="my_image();" class="w3-btn w3-grey w3-round"> Draw image! </a> <!-- Button to display a hidden image on the canvas -->
+	<a onclick="clear_canvas();" class="w3-btn w3-grey w3-round"> Clear Canvas!</a> <!-- Button to clear all drawings from the canvas -->
+
+	<!-- Hidden image element used as the source for the drawImage() function -->
+	<img id="rocketimg" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Space_shuttle_launching.jpg/640px-Space_shuttle_launching.jpg" alt="Image of Rocket" class="hidden" width="0" height="0"> <!-- Hidden image that is drawn to the canvas when the Draw image button is pressed -->
+</div>
+
+<script>
+function drawRect() { // This draws a rectangle on the canvas
+	var a_canvas = document.getElementById('a'); // this variable calls the canvas using its id
+	var a_context = a_canvas.getContext('2d'); // sets the canvas context to 2D drawing mode
+	a_context.fillStyle = "#808080"; // rectangle fill color is grey
+	a_context.fillRect(5, 5, 175, 100); // draw the rectangle at x=5, y=5 with width=175 and height=100
+};
+
+function my_name() { // this function writes a name on the canvas
+	var a_canvas = document.getElementById('a'); // this variable calls the canvas using its id
+	var a_context = a_canvas.getContext('2d'); // sets the canvas context to 2D drawing mode
+	a_context.font = "30px Times New Roman"; // sets font style and size for the text
+	a_context.fillStyle = "#000000"; // text color is black
+	a_context.fillText("Rocket Artist", 10, 150); // writes the text and positions it on the canvas
+};
+
+function my_image() { // this function draws a hidden image on the canvas
+	var a_canvas = document.getElementById('a'); // this variable calls the canvas using its id
+	var a_context = a_canvas.getContext('2d'); // sets the canvas context to 2D drawing mode
+	var rocketImage = document.getElementById('rocketimg'); // gets the hidden image element by id
+	a_context.drawImage(rocketImage, 5, 5, 100, 100); // draws the image on the canvas at the specified size
+};
+
+function clear_canvas() { // this function clears the canvas content
+	var a_canvas = document.getElementById('a'); // this variable calls the canvas using its id
+	a_canvas.width = a_canvas.width; // resetting width clears the canvas pixels
+};
+</script>
+
