@@ -43,8 +43,13 @@ console.log("This file last modified " + docMod); // generates message in javaSc
 
 
 
-<style>	
-
+<style>
+/* Page layout and canvas styling section */
+#content { max-width: 720px; margin: 0 auto; padding-bottom: 100px; } /* centers the main content and adds extra bottom space for the footer */
+#w3-canvas-label { margin-top: 10px; }
+#a { display: block; margin: 18px 0; background-color: #ffffff; } /* ensures the canvas stands out against the page background */
+.canvas-buttons a { margin: 4px 4px 4px 0; } /* spaces the buttons evenly for better usability */
+.hidden { display: none; } /* hides the image from page view while still allowing JavaScript to use it */
 </style>
 
 <body>
@@ -54,44 +59,124 @@ console.log("This file last modified " + docMod); // generates message in javaSc
 	
 <div id="content" class="w3-container">
 	<!-- Canvas area: this is where the drawing surface is created and displayed -->
-	<canvas id="a" width="300" height="190" style="border:2px solid #000000;"></canvas> <!-- This creates the canvas with a black border so users can see the drawing area -->
-	<p>Click the buttons below to create artwork on the canvas.</p> <!-- Instruction text describing what the canvas will do -->
+	<canvas id="a" width="300" height="190" style="border:2px solid #000000;"></canvas> <!-- Creates the canvas with a black border so the drawing area is visible immediately -->
+	<p id="w3-canvas-label">Click the buttons below to create artwork on the canvas. The first button now draws a complete scene with multiple shapes, arcs, and lines instead of just a plain rectangle.</p> <!-- Provides instructions and explains the improved artwork button -->
 
-	<a onclick="drawRect();" class="w3-btn w3-grey w3-round"> Draw Rectangle!</a> <!-- Button to draw a rectangle on the canvas -->
-	<a onclick="my_name();" class="w3-btn w3-grey w3-round"> Write name!</a> <!-- Button to write a name onto the canvas -->
-	<a onclick="my_image();" class="w3-btn w3-grey w3-round"> Draw image! </a> <!-- Button to display a hidden image on the canvas -->
-	<a onclick="clear_canvas();" class="w3-btn w3-grey w3-round"> Clear Canvas!</a> <!-- Button to clear all drawings from the canvas -->
+	<div class="canvas-buttons">
+		<a onclick="drawRect();" class="w3-btn w3-grey w3-round"> Draw Artwork!</a> <!-- Button to draw the improved artwork scene on the canvas -->
+		<a onclick="my_name();" class="w3-btn w3-grey w3-round"> Write Name</a> <!-- Button to add a name label onto the canvas artwork -->
+		<a onclick="my_image();" class="w3-btn w3-grey w3-round"> Draw Image!</a> <!-- Button to paint the hidden image onto the canvas using JavaScript -->
+		<a onclick="clear_canvas();" class="w3-btn w3-grey w3-round"> Clear Canvas!</a> <!-- Button to clear the entire canvas so the user can start again -->
+	</div>
 
-	<!-- Hidden image element used as the source for the drawImage() function -->
-	<img id="rocketimg" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Space_shuttle_launching.jpg/640px-Space_shuttle_launching.jpg" alt="Image of Rocket" class="hidden" width="0" height="0"> <!-- Hidden image that is drawn to the canvas when the Draw image button is pressed -->
+	<!-- Hidden image element used only by the drawImage() JavaScript function -->
+	<img id="rocketimg" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Space_shuttle_launching.jpg/640px-Space_shuttle_launching.jpg" alt="Image of a rocket launch" class="hidden" width="0" height="0"> <!-- Hidden image source that will be drawn on the canvas when requested -->
 </div>
 
 <script>
-function drawRect() { // This draws a rectangle on the canvas
-	var a_canvas = document.getElementById('a'); // this variable calls the canvas using its id
-	var a_context = a_canvas.getContext('2d'); // sets the canvas context to 2D drawing mode
-	a_context.fillStyle = "#808080"; // rectangle fill color is grey
-	a_context.fillRect(5, 5, 175, 100); // draw the rectangle at x=5, y=5 with width=175 and height=100
+// Canvas artwork functions: all drawing actions happen inside the <script> block.
+function drawRect() { // Draws a polished artwork scene with multiple shapes, arcs, and lines.
+	var a_canvas = document.getElementById('a'); // Select the canvas element by its id attribute.
+	var a_context = a_canvas.getContext('2d'); // Use the 2D drawing context for all canvas operations.
+
+	// Clear the canvas before drawing so each click starts fresh.
+	a_context.clearRect(0, 0, a_canvas.width, a_canvas.height);
+
+	// Draw the sky background using a large blue rectangle.
+	a_context.fillStyle = '#87CEEB'; // sky blue
+	a_context.fillRect(0, 0, 300, 190); // full canvas background
+
+	// Draw the ground as a green rectangle along the bottom.
+	a_context.fillStyle = '#3B7A57'; // green ground
+	a_context.fillRect(0, 148, 300, 42); // ground height of 42 pixels
+
+	// Draw the rocket body with a silver rectangle.
+	a_context.fillStyle = '#C0C0C0'; // silver color for the rocket
+	a_context.fillRect(120, 50, 60, 90); // rocket body shape
+
+	// Draw the rocket nose cone as a filled triangle.
+	a_context.beginPath();
+	a_context.moveTo(120, 50);
+	a_context.lineTo(150, 18);
+	a_context.lineTo(180, 50);
+	a_context.closePath();
+	a_context.fillStyle = '#D32F2F'; // red nose cone color
+	a_context.fill();
+	a_context.strokeStyle = '#000000'; // black outline for sharper edges
+	a_context.lineWidth = 2;
+	a_context.stroke();
+
+	// Draw a circular window using arc.
+	a_context.beginPath();
+	a_context.arc(150, 85, 16, 0, 2 * Math.PI); // full circle for the rocket window
+	a_context.fillStyle = '#B0E0E6'; // light blue window fill
+	a_context.fill();
+	a_context.stroke();
+
+	// Draw a detail line down the center of the rocket.
+	a_context.beginPath();
+	a_context.moveTo(150, 110);
+	a_context.lineTo(150, 138);
+	a_context.strokeStyle = '#000000'; // black line color
+	a_context.lineWidth = 2;
+	a_context.stroke();
+
+	// Draw rocket flame using a filled triangle and an arc for flames.
+	a_context.beginPath();
+	a_context.moveTo(130, 140);
+	a_context.lineTo(150, 178);
+	a_context.lineTo(170, 140);
+	a_context.closePath();
+	a_context.fillStyle = '#FFB300'; // bright flame color
+	a_context.fill();
+
+	a_context.beginPath();
+	a_context.arc(150, 150, 18, 0, Math.PI, true); // bottom half circle for rounded flame
+	a_context.fillStyle = '#FF6D00'; // orange flame accent
+	a_context.fill();
+
+	// Draw a few stars in the sky using small circles.
+	for (var starX = 35; starX <= 255; starX += 55) {
+		a_context.beginPath();
+		a_context.arc(starX, 35 + (starX % 24), 4, 0, 2 * Math.PI);
+		a_context.fillStyle = '#FFF9C4'; // light yellow star color
+		a_context.fill();
+	}
+
+	// Draw the horizon line where the sky and ground meet.
+	a_context.beginPath();
+	a_context.moveTo(0, 148);
+	a_context.lineTo(300, 148);
+	a_context.strokeStyle = '#245E1B'; // darker line for ground edge
+	a_context.lineWidth = 2;
+	a_context.stroke();
 };
 
-function my_name() { // this function writes a name on the canvas
-	var a_canvas = document.getElementById('a'); // this variable calls the canvas using its id
-	var a_context = a_canvas.getContext('2d'); // sets the canvas context to 2D drawing mode
-	a_context.font = "30px Times New Roman"; // sets font style and size for the text
-	a_context.fillStyle = "#000000"; // text color is black
-	a_context.fillText("Rocket Artist", 10, 150); // writes the text and positions it on the canvas
+function my_name() { // Writes the name label onto the canvas artwork.
+	var a_canvas = document.getElementById('a'); // Select the canvas element by id.
+	var a_context = a_canvas.getContext('2d'); // Use the 2D drawing context.
+	a_context.font = '26px Comic Sans MS'; // Set the font style and size for the text.
+	a_context.fillStyle = '#000080'; // Set the text color to dark blue.
+	a_context.fillText('Rocket Artist', 62, 180); // Draw the name text near the bottom of the canvas.
 };
 
-function my_image() { // this function draws a hidden image on the canvas
-	var a_canvas = document.getElementById('a'); // this variable calls the canvas using its id
-	var a_context = a_canvas.getContext('2d'); // sets the canvas context to 2D drawing mode
-	var rocketImage = document.getElementById('rocketimg'); // gets the hidden image element by id
-	a_context.drawImage(rocketImage, 5, 5, 100, 100); // draws the image on the canvas at the specified size
+function my_image() { // Draws the hidden image source onto the canvas.
+	var a_canvas = document.getElementById('a'); // Select the canvas element by id.
+	var a_context = a_canvas.getContext('2d'); // Use the 2D drawing context.
+	var rocketImage = document.getElementById('rocketimg'); // Get the hidden image element.
+
+	a_context.clearRect(0, 0, a_canvas.width, a_canvas.height); // Clear any previous drawings.
+	a_context.drawImage(rocketImage, 90, 40, 120, 100); // Draw the photo at a specified location and size.
 };
 
-function clear_canvas() { // this function clears the canvas content
-	var a_canvas = document.getElementById('a'); // this variable calls the canvas using its id
-	a_canvas.width = a_canvas.width; // resetting width clears the canvas pixels
+function clear_canvas() { // Clears the entire canvas so the user can redraw.
+	var a_canvas = document.getElementById('a'); // Select the canvas element by id.
+	var a_context = a_canvas.getContext('2d'); // Use the 2D drawing context.
+	a_context.clearRect(0, 0, a_canvas.width, a_canvas.height); // Removes all drawings from the canvas.
 };
 </script>
+
+<footer class="w3-bottom w3-container w3-flat-carrot">
+	<p>DIY!</p>
+</footer>
 
