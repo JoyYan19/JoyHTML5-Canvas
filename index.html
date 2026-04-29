@@ -60,21 +60,50 @@ console.log("This file last modified " + docMod); // generates message in javaSc
 <div id="content" class="w3-container">
 	<!-- Canvas area: this is where the drawing surface is created and displayed -->
 	<canvas id="a" width="300" height="190" style="border:2px solid #000000;"></canvas> <!-- Creates the canvas with a black border so the drawing area is visible immediately -->
-	<p id="w3-canvas-label">Click the buttons below to create artwork on the canvas. The first button now draws a complete scene with multiple shapes, arcs, and lines instead of just a plain rectangle.</p> <!-- Provides instructions and explains the improved artwork button -->
+	<p id="w3-canvas-label">Click the buttons below to create artwork on the canvas. Use the third button to enter drawing mode and draw on the canvas with your mouse.</p> <!-- Provides instructions and tells the user that the third button enables mouse drawing -->
 
 	<div class="canvas-buttons">
 		<a onclick="drawRect();" class="w3-btn w3-grey w3-round"> Draw Artwork!</a> <!-- Button to draw the improved artwork scene on the canvas -->
 		<a onclick="my_name();" class="w3-btn w3-grey w3-round"> Write Name</a> <!-- Button to add a name label onto the canvas artwork -->
-		<a onclick="my_image();" class="w3-btn w3-grey w3-round"> Draw Image!</a> <!-- Button to paint the hidden image onto the canvas using JavaScript -->
+		<a onclick="enableDrawing();" class="w3-btn w3-grey w3-round"> Draw with Mouse</a> <!-- Button to enable drawing mode so the user can paint with the mouse -->
 		<a onclick="clear_canvas();" class="w3-btn w3-grey w3-round"> Clear Canvas!</a> <!-- Button to clear the entire canvas so the user can start again -->
 	</div>
-
-	<!-- Hidden image element used only by the drawImage() JavaScript function -->
-	<img id="rocketimg" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Space_shuttle_launching.jpg/640px-Space_shuttle_launching.jpg" alt="Image of a rocket launch" class="hidden" width="0" height="0"> <!-- Hidden image source that will be drawn on the canvas when requested -->
 </div>
 
 <script>
 // Canvas artwork functions: all drawing actions happen inside the <script> block.
+var a_canvas = document.getElementById('a'); // Select the canvas element by id and keep it available for all functions.
+var a_context = a_canvas.getContext('2d'); // Use the 2D drawing context for canvas operations.
+var drawingEnabled = false; // Whether mouse drawing mode is active.
+var isMouseDown = false; // Whether the user is currently holding the mouse button down.
+var lastX = 0; // Last x position used while drawing.
+var lastY = 0; // Last y position used while drawing.
+
+a_canvas.addEventListener('mousedown', function(event) {
+	if (!drawingEnabled) return; // Only draw when mouse drawing mode is enabled.
+	isMouseDown = true; // Start a new line.
+	lastX = event.offsetX; // Save the starting x coordinate.
+	lastY = event.offsetY; // Save the starting y coordinate.
+});
+
+a_canvas.addEventListener('mousemove', function(event) {
+	if (!drawingEnabled || !isMouseDown) return; // Only draw while dragging the mouse.
+	a_context.beginPath();
+	a_context.moveTo(lastX, lastY); // Begin from the last position.
+	lastX = event.offsetX; // Update the last x coordinate.
+	lastY = event.offsetY; // Update the last y coordinate.
+	a_context.lineTo(lastX, lastY); // Draw to the new position.
+	a_context.stroke();
+});
+
+a_canvas.addEventListener('mouseup', function() {
+	isMouseDown = false; // Stop drawing when the mouse button is released.
+});
+
+a_canvas.addEventListener('mouseleave', function() {
+	isMouseDown = false; // Stop drawing if the mouse leaves the canvas.
+});
+
 function drawRect() { // Draws a polished artwork scene with multiple shapes, arcs, and lines.
 	var a_canvas = document.getElementById('a'); // Select the canvas element by its id attribute.
 	var a_context = a_canvas.getContext('2d'); // Use the 2D drawing context for all canvas operations.
@@ -160,19 +189,19 @@ function my_name() { // Writes the name label onto the canvas artwork.
 	a_context.fillText('Rocket Artist', 62, 180); // Draw the name text near the bottom of the canvas.
 };
 
-function my_image() { // Draws the hidden image source onto the canvas.
-	var a_canvas = document.getElementById('a'); // Select the canvas element by id.
-	var a_context = a_canvas.getContext('2d'); // Use the 2D drawing context.
-	var rocketImage = document.getElementById('rocketimg'); // Get the hidden image element.
-
-	a_context.clearRect(0, 0, a_canvas.width, a_canvas.height); // Clear any previous drawings.
-	a_context.drawImage(rocketImage, 90, 40, 120, 100); // Draw the photo at a specified location and size.
+function enableDrawing() { // Enables mouse drawing mode for the user.
+	drawingEnabled = true; // Turn on drawing mode.
+	a_context.strokeStyle = '#000000'; // Set the brush color.
+	a_context.lineWidth = 2; // Set the brush thickness.
+	a_context.lineJoin = 'round'; // Smooth the corners of brush strokes.
+	a_context.lineCap = 'round'; // Smooth the ends of brush strokes.
+	document.getElementById('w3-canvas-label').textContent = 'Mouse drawing mode is active. Click and drag on the canvas to draw.'; // Update instructions.
 };
 
-function clear_canvas() { // Clears the entire canvas so the user can redraw.
-	var a_canvas = document.getElementById('a'); // Select the canvas element by id.
-	var a_context = a_canvas.getContext('2d'); // Use the 2D drawing context.
+function clear_canvas() { // Clears the entire canvas so the user can start again.
 	a_context.clearRect(0, 0, a_canvas.width, a_canvas.height); // Removes all drawings from the canvas.
+	drawingEnabled = false; // Turn off mouse drawing mode when cleared.
+	document.getElementById('w3-canvas-label').textContent = 'Click the buttons below to create artwork on the canvas. Use the third button to enter drawing mode and draw on the canvas with your mouse.'; // Restore the original instructions.
 };
 </script>
 
